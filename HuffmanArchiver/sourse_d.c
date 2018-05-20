@@ -210,6 +210,7 @@ int main(int argc , char **argv){
    
    decode_message(input , output , root , fall_bit);
    delete_tree(decode_tree_root);
+   delete_tree(root);
    free(alpha_list);
 
 	 return 0;
