@@ -1,0 +1,1 @@
+gcc  randomtext.c -o rand.exe

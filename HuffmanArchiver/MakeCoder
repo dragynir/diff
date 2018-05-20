@@ -1,0 +1,14 @@
+zip: sourse.o api.o tree_api.o
+	gcc -o zip sourse.o api.o tree_api.o
+
+sourse.o: sourse.c
+	gcc -c sourse.c
+
+api.o: api.c
+	gcc -c api.c
+
+tree_api.o: tree_api.c
+	gcc -c tree_api.c
+
+clean:
+	rm -rf *.o
