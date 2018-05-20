@@ -1,1 +1,0 @@
-gcc sourse.c api.c calculate.c avl_var_tree.c -o sourse.exe
