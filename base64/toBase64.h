@@ -1,0 +1,1 @@
+char* toBase64(char* inputLine , char* base64Alphabet);

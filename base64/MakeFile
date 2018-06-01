@@ -1,0 +1,20 @@
+base:sourse.o api.o toBase64.o fromBase64.o
+	gcc -o base sourse.o api.o toBase64.o fromBase64.o
+
+sourse.o:sourse.c api.h
+	gcc -c sourse.c
+
+toBase64.o:toBase64.c
+	gcc -c toBase64.c
+
+fromBase64.o:fromBase64.c
+	gcc -c fromBase64.c
+
+api.o:api.c api.h
+	gcc -c api.c
+
+cleanAll:
+	rm -rf *.o base
+
+cleanO:
+	rm -rf *.o
