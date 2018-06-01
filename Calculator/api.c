@@ -4,7 +4,7 @@ struct Lexem* push(struct Lexem* root, struct Lexem* new_lex) {
 	new_lex->next = root;
 	return new_lex;
 }
-
+ 
 struct Lexem* pop(struct Lexem* root) {
 	struct Lexem* keep = root->next;
 	root->next = NULL;
@@ -31,17 +31,44 @@ void reverse(struct Lexem **Head) {
 	*Head = p;
 }
 
-void read_line(FILE *input_file , char *line){
-	memset(line , 0 , MAX_LINE_LENGTH);
+char* read_line(FILE *input_file , char *line){
 	char lexem;
+	int multifactor = 2 , last_size = MAX_LINE_LENGTH;
 	int current_s = -1;
-    while (fscanf(input_file , "%c", &lexem) != -1) {
+    while (fscanf(input_file , "%c", &lexem)) {
+    	if(feof(input_file)){
+    		free(line);
+    		return 0;
+    	}
+
+    	if(current_s + 2 >= last_size){
+
+    		line = (char*)realloc((void*)line , current_s * 2);
+    		last_size = current_s * 2;
+    		multifactor++;
+    	}
+
+    	if(lexem == '~'){
+    			free(line);
+    		return 0;
+    	}
+    	/*if(lexem == '!'){//очистка консоли ! только перед выражением
+    		free(line);
+    		line = (char*)malloc(MAX_LINE_LENGTH);
+    		current_s = -1;   		
+    		system("clear");
+    		continue;
+    	}*/
+
 		if (lexem == '\n'){
               break;
 		} 
-		line[++current_s] = lexem;
+		current_s++;
+		line[current_s] = lexem;
 	}
-	line[++current_s] = '\0';
+	current_s++;
+	line[current_s] = '\0';
+	return line;
 }
 
 void show_answer(struct Lexem* lex){

@@ -64,15 +64,15 @@ struct var* set_variable(struct var** variable_tree_root , char* line , int *cur
     while (1) {//рассщитываем размер переменной
 		simbol = line[move_line];
 		if (simbol != ' ' && simbol != '\n' && simbol != '=' && simbol != 0 && simbol!= ')' && simbol != '+' && simbol != '-' && simbol != '*' && simbol != '/' && simbol != '%' ) {
-			if (count < VAR_LENGTH) {
+			//if (count < VAR_LENGTH) {
 			     count++;
-			}
+			//}
 		}else break;
-		if(count >= VAR_LENGTH ){
+		/*if(count >= VAR_LENGTH ){
 			free(new_var);
 		    printf("Variable size error!!!\n");
 			return 0;	
-		}
+		}*/
 		count++;
 		move_line++;
 	}
@@ -83,15 +83,16 @@ struct var* set_variable(struct var** variable_tree_root , char* line , int *cur
 	while (1) {
 		simbol = line[(*current_s)];
 		if (simbol != ' ' && simbol != '\n' && simbol!= '=' && simbol != 0 && simbol!= ')' && simbol != '+' && simbol != '-' && simbol != '*' && simbol != '/' && simbol != '%' ) {
-			if (count < VAR_LENGTH) {
+			new_var->name[count++] = simbol;
+			/*if (count < VAR_LENGTH) {
 				new_var->name[count++] = simbol;
-			}
-			else {
-				free(new_var->name);
+			}*/
+			//else {
+				/*free(new_var->name);
 				free(new_var);
 				printf("Variable size error!!!\n");
-				return 0;
-			}
+				return 0;*/
+			//}
 		}else{
           if(simbol == '='){
           	(*current_s)--;///////////
@@ -202,7 +203,7 @@ struct Lexem* remove_operator(struct Lexem* operators_stack, struct Lexem*  new_
 /////////////////////////////возвращает список в польской записи или NULL  если:  добавляется переменная  
 struct Lexem* make_postfixf(struct var** variable_tree_root , char *line ,int *current_s) {
 
-	int  brackets_count = 0, success = 1 , check_operation = 0;// success = 0 - ошибка 
+	int  brackets_count = 0, success = 1 , check_operation = 2;// success = 0 - ошибка 
 	struct Lexem* out_stack = NULL, *operators_stack = NULL, *new_lexem = NULL ,  *prev_lexem = NULL;
 	char lexem , isnumber;//проверка на считывание очередного числа
 
@@ -221,9 +222,13 @@ struct Lexem* make_postfixf(struct var** variable_tree_root , char *line ,int *c
 
 		new_lexem = (struct Lexem*)malloc(sizeof(struct Lexem));//новая лехема
 		new_lexem->simbol = lexem;
-
+		
 		if(isdigit(lexem)) { //обработка чисел
-			check_operation = 0;
+			if(check_operation == 0){
+				check_operation = 1;
+				free(new_lexem);
+				break;
+			}
 			int number = 0;
 			isnumber = 1;
 			while (isdigit(lexem)) {
@@ -237,6 +242,7 @@ struct Lexem* make_postfixf(struct var** variable_tree_root , char *line ,int *c
 			new_lexem->simbol = 0;
 			out_stack = push(out_stack, new_lexem);
 			prev_lexem = new_lexem;
+			check_operation = 0;
 			if (line[(*current_s)] == '\0') break;
 		}
 		
@@ -261,7 +267,7 @@ struct Lexem* make_postfixf(struct var** variable_tree_root , char *line ,int *c
 						continue;
 				    }		  
 			}
-
+			int isOperation = 0;
 			if (lexem == '(') {//просто пушим '('  в стэк
 				brackets_count++;
 				new_lexem->prior = 0;
@@ -270,20 +276,23 @@ struct Lexem* make_postfixf(struct var** variable_tree_root , char *line ,int *c
 
 				switch (lexem)
 				{
-				case '+':new_lexem->prior = 1;check_operation = 1;break;
-				case '-':new_lexem->prior = 1;check_operation = 1;break;
-				case '*':new_lexem->prior = 2;check_operation = 1; break;
-				case '/':new_lexem->prior = 2;check_operation = 1;  break;
-				case '%': new_lexem->prior = 2;check_operation = 1;  break;
+				case '+':new_lexem->prior = 1;isOperation = 1;break;
+				case '-':new_lexem->prior = 1;isOperation = 1;break;
+				case '*':new_lexem->prior = 2;isOperation = 1; break;
+				case '/':new_lexem->prior = 2;isOperation = 1;  break;
+				case '%': new_lexem->prior = 2;isOperation = 1;  break;
 				case '=':success = 0; free(new_lexem);new_lexem = NULL;
 						break;
 				case ')':
+						isOperation = 0;
+						new_lexem->prior = 0;
+						brackets_count--;
 						if (prev_lexem && prev_lexem->simbol) {
 							printf("Wrong brackets!!!\n");
 							success = 0;
+							free(new_lexem);
+							new_lexem = NULL;
 						}
-						new_lexem->prior = 0;
-						brackets_count--;
 						break;	
 				default://проверка и добавление новых переменных
 						if (new_lexem->simbol != ' ') {//если пробел удаляем лексему
@@ -313,6 +322,12 @@ struct Lexem* make_postfixf(struct var** variable_tree_root , char *line ,int *c
                         free(new_lexem);
 						new_lexem = NULL;
 				}
+				if(check_operation && isOperation){
+					free(new_lexem);
+					break;
+				}
+				if(!check_operation)
+				check_operation = isOperation;
 
 				if (new_lexem) {
 					if (new_lexem->simbol == ')') {

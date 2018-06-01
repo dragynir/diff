@@ -6,7 +6,7 @@
 #include<string.h>
 
 #define VAR_LENGTH 10
-#define MAX_LINE_LENGTH 100
+#define MAX_LINE_LENGTH 10
 
 struct Lexem {
 	char simbol;
@@ -32,7 +32,7 @@ void delete_tree(struct var* root);
 
 void show_answer(struct Lexem* lex);
 
-void read_line(FILE* input_file  ,char *line);
+char* read_line(FILE* input_file  ,char *line);
 
 void reverse(struct Lexem **Head);
 
