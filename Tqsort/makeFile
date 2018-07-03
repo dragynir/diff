@@ -1,0 +1,8 @@
+start:sourse.o qsort.o
+	g++ -o start sourse.o qsort.o
+sourse.o: sourse.cpp
+	g++ -c sourse.cpp
+qsort.o:qsort.cpp
+	g++ -c qsort.cpp
+clean:
+	rm -rf *.o
