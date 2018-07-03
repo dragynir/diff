@@ -1,0 +1,14 @@
+init:sourse.o initField.o gameLoop.o gameRules.o api.h
+	gcc -o start sourse.o initField.o gameLoop.o gameRules.o
+
+
+sourse.o:
+	gcc -c sourse.c
+initField.o:
+	gcc -c initField.c
+gameLoop.o:
+	gcc -c gameLoop.c
+gameRules:
+	gcc -c gameRules.o
+clean:
+	rm -rf *.o

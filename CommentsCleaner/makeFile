@@ -1,0 +1,8 @@
+start1:sourse.o CommentsCleaner.o
+	g++ -o start sourse.o CommentsCleaner.o
+sourse.o: sourse.cpp
+	g++ -c sourse.cpp
+CommentsCleaner.o: CommentsCleaner.cpp CommentsCleaner.h
+	g++ -c CommentsCleaner.cpp
+clean:
+	rm -rf *.o

@@ -1,0 +1,1 @@
+void DrawGameScene(char** sceneField , int fieldSize);
